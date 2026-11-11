@@ -10,6 +10,7 @@ from typing import List
 from sqlalchemy import Column, Integer, String, Boolean, select
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy.orm import DeclarativeBase
+from screener_service import run_screener
 
 # ----------------- Database Setup -----------------
 load_dotenv()
@@ -114,3 +115,9 @@ async def delete_task(task_id: int, db: AsyncSession = Depends(get_db)):
     await db.delete(task)
     await db.commit()
     return {"message": f"Task {task_id} deleted successfully"}
+
+# ----------------- Exposing Screener API -----------------
+@app.get("/api/screener")
+async def get_screener():
+    """Returns technical scan results for NSE stocks."""
+    return run_screener()
